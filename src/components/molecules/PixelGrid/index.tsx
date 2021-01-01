@@ -1,32 +1,25 @@
-import { useMeasure } from "react-use"
-import { Box } from "@material-ui/core"
+import Pixel from "components/atoms/Pixel"
+import { Sprite } from "types"
 
-import Pixel from "../../atoms/Pixel"
+interface Props {
+  sprite: Sprite
+  fillPixel: (index: number) => void
+  clearPixel: (index: number) => void
+}
 
-const SIZE = 8
-const SIZE_ARRAY = Array(SIZE).fill(null)
-
-export default function PixelGrid() {
-  const [ref, { width }] = useMeasure<HTMLDivElement>()
-
-  const pixelSize = width / SIZE
-
+export default function PixelGrid({ sprite, fillPixel, clearPixel }: Props) {
   return (
-    <div ref={ref}>
-      {SIZE_ARRAY.map((_, rowIndex) => (
-        <Box
-          key={rowIndex}
-          display="flex"
-          flexDirection="row"
-          sx={{ height: pixelSize }}
-          // display="flex"
-          // flexDirection="row"
-          // height={pixelSize}
+    <div className="grid grid-cols-8 gap-1 w-96 h-96">
+      {new Array(64).fill(null).map((_, index) => (
+        <Pixel
+          key={index}
+          color={sprite[index]}
+          onFill={(fill) => {
+            fill === "color" ? fillPixel(index) : clearPixel(index)
+          }}
         >
-          {SIZE_ARRAY.map((_, colIndex) => (
-            <Pixel key={colIndex} color={`#0${rowIndex}${colIndex}`} />
-          ))}
-        </Box>
+          {index}
+        </Pixel>
       ))}
     </div>
   )

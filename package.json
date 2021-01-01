@@ -8,17 +8,16 @@
     "start": "next start"
   },
   "dependencies": {
-    "@emotion/cache": "latest",
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
-    "@emotion/server": "latest",
-    "@material-ui/core": "next",
-    "@material-ui/icons": "next",
-    "material-ui-color": "latest",
+    "autoprefixer": "^10.1.0",
+    "axios": "^0.21.1",
+    "axios-hooks": "^2.2.0",
+    "heroicons-react": "^1.3.0",
     "next": "latest",
+    "postcss": "^8.2.1",
     "react": "latest",
     "react-dom": "latest",
-    "react-use": "latest"
+    "react-use": "latest",
+    "tailwindcss": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "latest",

@@ -1,12 +1,33 @@
-import { Box } from "@material-ui/core"
+import { PropsWithChildren } from "react"
+
+import { PixelColor } from "types"
 
 interface Props {
-  color: string
+  color: PixelColor
+  onFill: (fill: "color" | "clear") => void
 }
-export default function Pixel(props: Props) {
+export default function Pixel({
+  color,
+  onFill,
+  children,
+}: PropsWithChildren<Props>) {
   return (
-    <Box flex={1} bgcolor={props.color} padding={2}>
-      {props.color}
-    </Box>
+    <div
+      className={`
+        flex items-center justify-center
+        rounded-md
+        cursor-pointer
+        border border-gray-200
+        text-xl text-gray-500 hover:text-gray-700
+      `}
+      style={{ backgroundColor: color || undefined }}
+      onClick={() => onFill("color")}
+      onContextMenu={(ev) => {
+        onFill("clear")
+        ev.preventDefault()
+      }}
+    >
+      {children}
+    </div>
   )
 }
