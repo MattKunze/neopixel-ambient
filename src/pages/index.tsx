@@ -5,7 +5,7 @@ import Button from "components/atoms/Button"
 import PaletteSwatch from "components/molecules/PaletteSwatch"
 import PixelGrid from "components/molecules/PixelGrid"
 import Controls from "components/organisms/Controls"
-import { PixelColor, Sprite } from "types"
+import { PaletteColor, PixelColor, Sprite } from "types"
 
 const EMPTY_SPRITE = new Array(64).fill(null)
 const PALETTE = [
@@ -48,13 +48,19 @@ export default function Home() {
       />
 
       <div className="flex flex-row gap-2">
-        <Button color="white" onClick={() => setSprite(EMPTY_SPRITE)}>
-          Clear
-          <RefreshOutline />
-        </Button>
-        <Button color="white" onClick={() => stripes()}>
-          Stripes!
-        </Button>
+        <Button
+          text="Clear"
+          icon={<RefreshOutline />}
+          color={PaletteColor.Gray}
+          intensity={100}
+          onClick={() => setSprite(EMPTY_SPRITE)}
+        />
+        <Button
+          text="Stripes!"
+          color={PaletteColor.Gray}
+          intensity={100}
+          onClick={() => stripes()}
+        />
       </div>
 
       <PaletteSwatch
