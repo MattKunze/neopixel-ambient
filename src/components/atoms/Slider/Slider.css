@@ -1,0 +1,60 @@
+/* note these are imported by global.scss */
+.slider-thumb::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full cursor-pointer;
+}
+
+.slider-thumb.blue::-webkit-slider-thumb {
+  @apply bg-blue-500;
+}
+.slider-thumb.blue::-webkit-slider-thumb:hover {
+  @apply bg-blue-400;
+}
+
+.slider-thumb.gray::-webkit-slider-thumb {
+  @apply bg-gray-500;
+}
+.slider-thumb.gray::-webkit-slider-thumb:hover {
+  @apply bg-gray-400;
+}
+
+.slider-thumb.green::-webkit-slider-thumb {
+  @apply bg-green-500;
+}
+.slider-thumb.green::-webkit-slider-thumb:hover {
+  @apply bg-green-400;
+}
+
+.slider-thumb.indigo::-webkit-slider-thumb {
+  @apply bg-indigo-500;
+}
+.slider-thumb.indigo::-webkit-slider-thumb:hover {
+  @apply bg-indigo-400;
+}
+
+.slider-thumb.pink::-webkit-slider-thumb {
+  @apply bg-pink-500;
+}
+.slider-thumb.pink::-webkit-slider-thumb:hover {
+  @apply bg-pink-400;
+}
+
+.slider-thumb.purple::-webkit-slider-thumb {
+  @apply bg-purple-500;
+}
+.slider-thumb.purple::-webkit-slider-thumb:hover {
+  @apply bg-purple-400;
+}
+
+.slider-thumb.red::-webkit-slider-thumb {
+  @apply bg-red-500;
+}
+.slider-thumb.red::-webkit-slider-thumb:hover {
+  @apply bg-red-400;
+}
+
+.slider-thumb.yellow::-webkit-slider-thumb {
+  @apply bg-yellow-500;
+}
+.slider-thumb.yellow::-webkit-slider-thumb:hover {
+  @apply bg-yellow-400;
+}
