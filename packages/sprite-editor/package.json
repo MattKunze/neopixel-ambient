@@ -1,0 +1,42 @@
+{
+  "name": "sprite-editor",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss7-compat": "^2",
+    "autoprefixer": "^9",
+    "axios": "latest",
+    "axios-hooks": "latest",
+    "heroicons-react": "latest",
+    "next": "latest",
+    "postcss": "^7",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-use": "latest",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@storybook/addon-actions": "latest",
+    "@storybook/addon-essentials": "latest",
+    "@storybook/addon-links": "latest",
+    "@storybook/react": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "babel-loader": "latest",
+    "tsconfig-paths-webpack-plugin": "latest",
+    "typescript": "latest"
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5"
+  }
+}
