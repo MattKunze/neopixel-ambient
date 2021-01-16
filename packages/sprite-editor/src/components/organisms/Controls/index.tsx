@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import Button from "components/atoms/Button"
-import useApi from "hooks/useApi"
+import useBroker from "hooks/useBroker"
 import { PaletteColor, Sprite } from "types"
 
 interface Props {
@@ -10,32 +10,11 @@ interface Props {
 }
 export default function Controls({ color, sprite }: Props) {
   const [sync, setSync] = useState(true)
-  const [_f, fill] = useApi(
-    {
-      url: `/fill/${encodeURIComponent(color || "")}`,
-      method: "POST",
-    },
-    { manual: true }
-  )
-  const [_o, off] = useApi(
-    {
-      url: `/fill/000`,
-      method: "POST",
-    },
-    { manual: true }
-  )
-  const [_s, sendSprite] = useApi(
-    {
-      url: `/sprite`,
-      method: "POST",
-      data: sprite,
-    },
-    { manual: true }
-  )
+  const broker = useBroker()
 
   useEffect(() => {
     if (sync) {
-      sendSprite()
+      broker.sprite(sprite)
     }
   }, [sprite, sync])
 
@@ -47,12 +26,16 @@ export default function Controls({ color, sprite }: Props) {
         active={sync}
         onClick={() => setSync(!sync)}
       />
-      <Button text="Fill" disabled={!color} onClick={fill} />
+      <Button
+        text="Fill"
+        disabled={!color}
+        onClick={() => color && broker.fill(color)}
+      />
       <Button
         text="Off"
         color={PaletteColor.Gray}
         intensity={100}
-        onClick={off}
+        onClick={broker.off}
       />
     </div>
   )

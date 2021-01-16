@@ -11,9 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2",
+    "async-mqtt": "^2.6.1",
     "autoprefixer": "^9",
-    "axios": "latest",
-    "axios-hooks": "latest",
     "heroicons-react": "latest",
     "next": "latest",
     "postcss": "^7",
