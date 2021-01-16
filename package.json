@@ -10,32 +10,30 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "autoprefixer": "^10.1.0",
-    "axios": "^0.21.1",
-    "axios-hooks": "^2.2.0",
-    "heroicons-react": "^1.3.0",
+    "@tailwindcss/postcss7-compat": "^2",
+    "autoprefixer": "^9",
+    "axios": "latest",
+    "axios-hooks": "latest",
+    "heroicons-react": "latest",
     "next": "latest",
-    "postcss": "^8.2.1",
+    "postcss": "^7",
     "react": "latest",
     "react-dom": "latest",
     "react-use": "latest",
-    "tailwindcss": "^2.0.2"
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@storybook/addon-actions": "^6.1.11",
-    "@storybook/addon-essentials": "^6.1.11",
-    "@storybook/addon-links": "^6.1.11",
-    "@storybook/react": "^6.1.11",
+    "@babel/core": "latest",
+    "@storybook/addon-actions": "latest",
+    "@storybook/addon-essentials": "latest",
+    "@storybook/addon-links": "latest",
+    "@storybook/react": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "babel-loader": "^8.2.2",
-    "tsconfig-paths-webpack-plugin": "^3.3.0",
+    "babel-loader": "latest",
+    "tsconfig-paths-webpack-plugin": "latest",
     "typescript": "latest"
-  },
-  "resolutions": {
-    "postcss": "^8.1.7"
   },
   "prettier": {
     "semi": false,
