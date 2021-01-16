@@ -1,0 +1,16 @@
+version: '2'
+
+volumes:
+  data:
+  logs:
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ${PWD}/mosquitto.config:/mosquitto/config/mosquitto.conf
+      - data:/mosquitto/data
+      - logs:/mosquitto/logs
