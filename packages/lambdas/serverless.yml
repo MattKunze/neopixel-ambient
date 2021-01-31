@@ -1,0 +1,129 @@
+service: lambdas
+
+useDotenv: true
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+  - serverless-offline
+  - serverless-step-functions
+  - serverless-localstack
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-west-2
+  apiGateway:
+    shouldStartNameWithService: true
+  lambdaHashingVersion: 20201221
+  environment:
+    BUCKET_TABLE: bucket
+    UBNT_URL: ${env:UBNT_URL}
+    UBNT_USERNAME: ${env:UBNT_USERNAME}
+    UBNT_PASSWORD: ${env:UBNT_PASSWORD}
+    UBNT_SOCKET: ${env:UBNT_SOCKET}
+
+custom:
+  localstack:
+    stages:
+      - local
+    host: http://localhost
+    edgePort: 4566
+
+functions:
+  echo:
+    handler: src/echoHandler.default
+    events:
+      - http: GET /echo
+
+  bucket:
+    handler: src/bucketHandler.default
+    events:
+      - http: POST /bucket
+
+  ubntSessionId:
+    handler: src/ubntSessionIdHandler.default
+    events:
+      - http: GET /ubntSessionId
+
+  ubntStatistics:
+    handler: src/ubntStatisticsHandler.default
+    events:
+      - http: GET /ubntStatistics
+
+stepFunctions:
+  stateMachines:
+    recordUbntSystem:
+      events:
+        - schedule: rate(5 minutes)
+      definition:
+        StartAt: GetSessionId
+        States:
+          GetSessionId:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ubntSessionId, Arn]
+            Parameters:
+              body: '{"topics": "system-stats", "key": "ubnt-system"}'
+            Next: FetchStatistics
+          FetchStatistics:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ubntStatistics, Arn]
+            Next: Report
+          Report:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [bucket, Arn]
+            End: true
+    recordUbntInterfaces:
+      events:
+        - schedule: rate(1 minute)
+      definition:
+        StartAt: GetSessionId
+        States:
+          GetSessionId:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ubntSessionId, Arn]
+            Parameters:
+              body: '{"topics": "interfaces", "key": "ubnt-interfaces"}'
+            Next: FetchStatistics
+          FetchStatistics:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ubntStatistics, Arn]
+            Next: Report
+          Report:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [bucket, Arn]
+            End: true
+  validate: true
+
+resources:
+  Resources:
+    CandidatesDynamoDbTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "key"
+            AttributeType: "S"
+          - AttributeName: "timestamp"
+            AttributeType: "N"
+        KeySchema:
+          - AttributeName: "key"
+            KeyType: "HASH"
+          - AttributeName: "timestamp"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.BUCKET_TABLE}

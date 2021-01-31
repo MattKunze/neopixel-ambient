@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
@@ -11,15 +11,18 @@
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2",
-    "async-mqtt": "^2.6.1",
+    "async-mqtt": "latest",
     "autoprefixer": "^9",
+    "axios": "latest",
+    "cookie": "^0.4.1",
     "heroicons-react": "latest",
     "next": "latest",
     "postcss": "^7",
     "react": "latest",
     "react-dom": "latest",
     "react-use": "latest",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "@babel/core": "latest",
@@ -27,15 +30,14 @@
     "@storybook/addon-essentials": "latest",
     "@storybook/addon-links": "latest",
     "@storybook/react": "latest",
+    "@types/cookie": "^0.4.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/ws": "^7.4.0",
     "babel-loader": "latest",
+    "serverless-step-functions": "^2.29.0",
     "tsconfig-paths-webpack-plugin": "latest",
     "typescript": "latest"
-  },
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5"
   }
 }

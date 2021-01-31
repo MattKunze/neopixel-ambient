@@ -1,0 +1,34 @@
+{
+  "name": "lambdas",
+  "version": "0.1.0",
+  "description": "A TypeScript starter for Serverless Framework",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy --stage local",
+    "test": "serverless-bundle test"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnomalyInnovations/serverless-typescript-starter.git"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.64",
+    "@types/cookie": "^0.4.0",
+    "@types/jest": "^26.0.14",
+    "@types/ramda": "^0.27.35",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "serverless-bundle": "latest",
+    "serverless-localstack": "latest",
+    "serverless-offline": "latest"
+  },
+  "dependencies": {
+    "aws-cdk": "^1.86.0",
+    "axios": "^0.21.1",
+    "cookie": "^0.4.1",
+    "ramda": "^0.27.1"
+  }
+}

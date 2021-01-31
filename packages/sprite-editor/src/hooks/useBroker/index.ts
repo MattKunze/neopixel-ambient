@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from "react"
 
 import { Sprite } from "types"
 
-const MQTT_HOST = "ws://mqtt:9001"
+const MQTT_HOST = "ws://mqtt.boing.net:9001"
 const MQTT_TOPIC = "sprite"
 
 interface BrokerInterface {
