@@ -6,9 +6,8 @@ import PaletteSwatch from "components/molecules/PaletteSwatch"
 import PixelGrid from "components/molecules/PixelGrid"
 import Controls from "components/organisms/Controls"
 import WhiteSlider from "components/organisms/WhiteSlider"
-import { PaletteColor, PixelColor, Sprite } from "types"
+import { EMPTY_SPRITE, PaletteColor, PixelColor, Sprite } from "types"
 
-const EMPTY_SPRITE = new Array(64).fill(null)
 const PALETTE = [
   "#f94144",
   "#f3722c",
@@ -44,6 +43,7 @@ export default function Home() {
     <div className="container mx-auto m-4 grid grid-flow-row gap-4">
       <PixelGrid
         sprite={sprite}
+        editable={true}
         fillPixel={mutate.bind(null, selectedColor)}
         clearPixel={mutate.bind(null, null)}
       />

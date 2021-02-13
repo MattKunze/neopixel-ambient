@@ -21,7 +21,7 @@ provider:
     shouldStartNameWithService: true
   lambdaHashingVersion: 20201221
   environment:
-    BUCKET_TABLE: bucket
+    BUCKET_TABLE: ${env:BUCKET_TABLE}
     UBNT_URL: ${env:UBNT_URL}
     UBNT_USERNAME: ${env:UBNT_USERNAME}
     UBNT_PASSWORD: ${env:UBNT_PASSWORD}
@@ -55,54 +55,97 @@ functions:
     events:
       - http: GET /ubntStatistics
 
+  deleteStaleEntries:
+    handler: src/deleteStaleEntries.default
+    timeout: 90
+    events:
+      - http: POST /deleteStale
+
+  streamStatistics:
+    handler: src/streamStatisticsHandler.default
+    timeout: 90
+    events:
+      - http: POST /streamStatistics
+
 stepFunctions:
   stateMachines:
-    recordUbntSystem:
-      events:
-        - schedule: rate(5 minutes)
-      definition:
-        StartAt: GetSessionId
-        States:
-          GetSessionId:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ubntSessionId, Arn]
-            Parameters:
-              body: '{"topics": "system-stats", "key": "ubnt-system"}'
-            Next: FetchStatistics
-          FetchStatistics:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ubntStatistics, Arn]
-            Next: Report
-          Report:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [bucket, Arn]
-            End: true
-    recordUbntInterfaces:
+    ubntInterfaces:
       events:
         - schedule: rate(1 minute)
       definition:
-        StartAt: GetSessionId
+        StartAt: StreamInterfaces
         States:
-          GetSessionId:
+          StreamInterfaces:
             Type: Task
             Resource:
-              Fn::GetAtt: [ubntSessionId, Arn]
+              Fn::GetAtt: [streamStatistics, Arn]
             Parameters:
-              body: '{"topics": "interfaces", "key": "ubnt-interfaces"}'
-            Next: FetchStatistics
-          FetchStatistics:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ubntStatistics, Arn]
-            Next: Report
-          Report:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [bucket, Arn]
+              bucketArn:
+                Fn::GetAtt: [bucket, Arn]
+              topic: interfaces
+              timeout: 60
             End: true
+    dbCleanup:
+      events:
+        - schedule: rate(5 minutes)
+      definition:
+        StartAt: PruneUbntInterfaces
+        States:
+          PruneUbntInterfaces:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [deleteStaleEntries, Arn]
+            Parameters:
+              key: ubnt-interfaces
+              expires: 300
+            End: true
+
+  #   recordUbntSystem:
+  #     events:
+  #       - schedule: rate(5 minutes)
+  #     definition:
+  #       StartAt: GetSessionId
+  #       States:
+  #         GetSessionId:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [ubntSessionId, Arn]
+  #           Parameters:
+  #             body: '{"topics": "system-stats", "key": "ubnt-system"}'
+  #           Next: FetchStatistics
+  #         FetchStatistics:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [ubntStatistics, Arn]
+  #           Next: Report
+  #         Report:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [bucket, Arn]
+  #           End: true
+  #   recordUbntInterfaces:
+  #     events:
+  #       - schedule: rate(1 minute)
+  #     definition:
+  #       StartAt: GetSessionId
+  #       States:
+  #         GetSessionId:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [ubntSessionId, Arn]
+  #           Parameters:
+  #             body: '{"topics": "interfaces", "key": "ubnt-interfaces"}'
+  #           Next: FetchStatistics
+  #         FetchStatistics:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [ubntStatistics, Arn]
+  #           Next: Report
+  #         Report:
+  #           Type: Task
+  #           Resource:
+  #             Fn::GetAtt: [bucket, Arn]
+  #           End: true
   validate: true
 
 resources:

@@ -22,6 +22,7 @@
     "react-dom": "latest",
     "react-use": "latest",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "victory": "^35.4.8",
     "ws": "^7.4.2"
   },
   "devDependencies": {

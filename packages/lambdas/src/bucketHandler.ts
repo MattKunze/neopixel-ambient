@@ -1,25 +1,30 @@
-import { Context, APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda"
+import { Context, APIGatewayProxyResult } from "aws-lambda"
 import AWS from "aws-sdk"
 
 import config from "./config"
-import { createResponse } from "./utils"
+import { createGatewayResponse, LambdaEvent, normalizeEvent } from "./utils"
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({
   endpoint: config.awsEndpoint,
 })
 
+interface BucketEntry {
+  key: string
+  payload: Record<string, any>
+}
+
 export default async function handler(
-  event: APIGatewayEvent,
+  event: LambdaEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> {
-  const body = JSON.parse(event.body || "")
-  const { key } = body
-  console.info("bucket", body)
+  const { key, payload } = normalizeEvent<BucketEntry>(event)
+  const timestamp = Math.round(Date.now() / 1000)
+  console.info("bucket", { key, timestamp })
 
   const item = {
     key,
-    timestamp: Date.now(),
-    ...body.payload,
+    timestamp,
+    ...payload,
   }
   await dynamoDb
     .put({
@@ -28,5 +33,5 @@ export default async function handler(
     })
     .promise()
 
-  return createResponse(item)
+  return createGatewayResponse(item)
 }

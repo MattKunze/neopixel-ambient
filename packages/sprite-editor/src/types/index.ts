@@ -12,3 +12,4 @@ export enum PaletteColor {
 export type PixelColor = string | null
 
 export type Sprite = PixelColor[]
+export const EMPTY_SPRITE = new Array(64).fill(null)
