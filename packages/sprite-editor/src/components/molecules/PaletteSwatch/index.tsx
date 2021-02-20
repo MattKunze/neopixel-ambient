@@ -1,4 +1,4 @@
-interface Props {
+export interface PaletteSwatchProps {
   colors: string[]
   selectedColor: string | null
   onSelect: (color: string) => void
@@ -8,13 +8,13 @@ export default function PaletteSwatch({
   colors,
   selectedColor,
   onSelect,
-}: Props) {
+}: PaletteSwatchProps) {
   return (
     <div className="h-32 w-96 flex flex-col shadow rounded-3xl overflow-hidden">
       <div className="flex flex-row flex-1">
-        {colors.map((color) => (
+        {colors.map((color, index) => (
           <div
-            key={color}
+            key={`${index}_${color}`}
             className={`
               flex items-center justify-center flex-1 hover:flex-auto
               truncate text-transparent hover:text-black

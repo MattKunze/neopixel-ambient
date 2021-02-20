@@ -7,6 +7,7 @@ import PixelGrid from "components/molecules/PixelGrid"
 import Controls from "components/organisms/Controls"
 import WhiteSlider from "components/organisms/WhiteSlider"
 import { EMPTY_SPRITE, PaletteColor, PixelColor, Sprite } from "types"
+import { createStripedSprite } from "utils/sprites"
 
 const PALETTE = [
   "#f94144",
@@ -30,13 +31,7 @@ export default function Home() {
   }
 
   const stripes = () => {
-    const update = [...EMPTY_SPRITE]
-    for (let row = 0; row < PALETTE.length; row++) {
-      for (let col = 0; col < 8; col++) {
-        update[row * 8 + col] = PALETTE[row]
-      }
-    }
-    setSprite(update)
+    setSprite(createStripedSprite(PALETTE))
   }
 
   return (

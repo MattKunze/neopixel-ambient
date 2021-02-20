@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 
 const post = (msg: object, socket: WebSocket): void => {
   const formatted = JSON.stringify(msg)
+  console.info(`${formatted.length}\n${formatted}`)
   socket.send(`${formatted.length}\n${formatted}`)
 }
 

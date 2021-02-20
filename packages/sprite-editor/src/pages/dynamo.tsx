@@ -1,9 +1,9 @@
-import AWS from "aws-sdk"
 import * as R from "ramda"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 
 import PixelGrid from "components/molecules/PixelGrid"
 import useAsyncEffect from "hooks/useAsyncEffect"
+import useDynamoDbClient from "hooks/useDynamoDbClient"
 import { EMPTY_SPRITE, Sprite } from "types"
 
 interface RawInterfaceStat {
@@ -107,15 +107,7 @@ export default function Dynamo() {
   const [current, setCurrent] = useState<Sprite | null>(null)
   const [history, setHistory] = useState<Sprite | null>(null)
 
-  const db = useRef<AWS.DynamoDB.DocumentClient>()
-  useEffect(() => {
-    db.current = new AWS.DynamoDB.DocumentClient({
-      endpoint: "http://localhost:4566",
-      region: "us-west-2",
-      accessKeyId: "test",
-      secretAccessKey: "test",
-    })
-  }, [])
+  const db = useDynamoDbClient()
 
   useAsyncEffect(async () => {
     if (!db.current) {

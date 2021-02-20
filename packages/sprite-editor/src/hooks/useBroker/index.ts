@@ -20,19 +20,19 @@ export default function useBroker(): BrokerInterface {
   })
 
   const off = useCallback(() => {
-    console.info("off")
+    // console.info("off")
     client.current?.publish(`${MQTT_TOPIC}/off`, "")
   }, [client.current])
   const fill = useCallback(
     (color: string) => {
-      console.info("fill", color)
+      // console.info("fill", color)
       client.current?.publish(`${MQTT_TOPIC}/fill`, color)
     },
     [client.current]
   )
   const sprite = useCallback(
     (data: Sprite) => {
-      console.info("sprite", data)
+      // console.info("sprite", data)
       client.current?.publish(`${MQTT_TOPIC}/sprite`, data.join(","))
     },
     [client.current]

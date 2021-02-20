@@ -1,4 +1,4 @@
-import { Context, APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda"
+import { Context, APIGatewayProxyResult } from "aws-lambda"
 import AWS from "aws-sdk"
 
 import config from "./config"
@@ -42,7 +42,7 @@ export default async function handler(
 
         const payload = {
           key: `ubnt-${topic}`,
-          payload: stats,
+          payload: stats.interfaces,
         }
         await lambda
           .invoke({

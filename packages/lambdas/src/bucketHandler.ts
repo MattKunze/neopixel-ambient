@@ -24,7 +24,7 @@ export default async function handler(
   const item = {
     key,
     timestamp,
-    ...payload,
+    payload,
   }
   await dynamoDb
     .put({

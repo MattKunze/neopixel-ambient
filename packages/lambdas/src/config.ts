@@ -1,5 +1,6 @@
 interface Config {
   awsEndpoint: string
+  openWeatherApiKey: string
   ubntUrl: string
   ubntUsername: string
   ubntPassword: string
@@ -20,6 +21,7 @@ const config: Config = {
     //process.env.LOCALSTACK_HOSTNAME
     "host.docker.internal"
   }:${process.env.EDGE_PORT}`,
+  openWeatherApiKey: getVar("OPEN_WEATHER_API_KEY"),
   ubntUrl: getVar("UBNT_URL"),
   ubntUsername: getVar("UBNT_USERNAME"),
   ubntPassword: getVar("UBNT_PASSWORD"),

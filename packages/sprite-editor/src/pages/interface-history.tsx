@@ -1,6 +1,5 @@
 import AWS from "aws-sdk"
-import * as R from "ramda"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useInterval } from "react-use"
 import {
   VictoryArea,
@@ -12,9 +11,10 @@ import {
 } from "victory"
 
 import Toggle from "components/atoms/Toggle"
-import PixelGrid from "components/molecules/PixelGrid"
-// import useBroker from "hooks/useBroker"
+import useBroker from "hooks/useBroker"
+import useDynamoDbClient from "hooks/useDynamoDbClient"
 import { EMPTY_SPRITE, Sprite } from "types"
+import { Rainbow } from "utils/palettes"
 
 interface RawInterfaceStat {
   addresses?: string[]
@@ -33,15 +33,16 @@ interface FormattedStat {
   up: number
   isSwitched: boolean
 }
-type FormattedStats = Record<string, FormattedStat>
+type FormattedStats = Record<string, FormattedStat[]>
 
 const formatRawStat = (timestamp: number, raw: RawInterfaceStat) => ({
   timestamp,
-  down: parseInt(raw.stats.rx_bps, 10),
-  up: parseInt(raw.stats.tx_bps, 10),
+  down: parseInt(raw.stats.rx_bps, 10) * 10,
+  up: parseInt(raw.stats.tx_bps, 10) * 10,
   isSwitched: raw.is_switched_port === "true",
 })
 
+/*
 const RANGES = [
   100 * 1024, // 100Kbs
   500 * 1024, // 500Kbs
@@ -64,6 +65,7 @@ const getRange = (stats: FormattedStat[]) => {
   )
   return RANGES.find((t) => max.up <= t && max.down <= t) || RANGES[0]
 }
+*/
 
 const formatTimestamp = (timestamp: number) =>
   new Date(timestamp * 1000).getSeconds()
@@ -82,6 +84,7 @@ const formatBitrate = (bps: number) => {
   return `${bps.toFixed(1)}${suffix}`
 }
 
+/*
 const historySprite = (
   stats: FormattedStats[],
   interfaceName: string = "switch0"
@@ -107,6 +110,25 @@ const historySprite = (
   }
   return sprite
 }
+*/
+
+const RANGES = [10, 100, 200]
+const historySprite = (stats: FormattedStat[]) => {
+  const rate = stats.slice(0, 8).map((s) => s.down + s.up)
+  const range =
+    RANGES.find((r) => rate.every((t) => t <= r * 1024 * 1024)) || RANGES[0]
+  const levels = rate.map((t) => Math.round((t / (range * 1024 * 1024)) * 8))
+
+  const sprite = EMPTY_SPRITE.slice()
+  for (let i = 0; i < Math.min(levels.length, 8); i++) {
+    for (let s = 0; s < levels[i]; s++) {
+      sprite[i * 8 + s] = Rainbow[7 - s]
+    }
+  }
+
+  console.info({ rate, range, levels, sprite })
+  return sprite
+}
 
 const fetchHistory = async (db: AWS.DynamoDB.DocumentClient) => {
   const response = await db
@@ -125,21 +147,15 @@ const fetchHistory = async (db: AWS.DynamoDB.DocumentClient) => {
     })
     .promise()
   if (response.Items) {
-    return response.Items.reduce<Record<string, FormattedStat[]>>(
-      (memo, item) => {
-        const timestamp = item["timestamp"] as number
-        const stats = item["interfaces"] as RawStats
-        return Object.keys(stats).reduce<Record<string, FormattedStat[]>>(
-          (memo, key) => {
-            memo[key] = memo[key] ?? []
-            memo[key].push(formatRawStat(timestamp, stats[key]))
-            return memo
-          },
-          memo
-        )
-      },
-      {}
-    )
+    return response.Items.reduce<FormattedStats>((memo, item) => {
+      const timestamp = item["timestamp"] as number
+      const stats = item["interfaces"] as RawStats
+      return Object.keys(stats).reduce<FormattedStats>((memo, key) => {
+        memo[key] = memo[key] ?? []
+        memo[key].push(formatRawStat(timestamp, stats[key]))
+        return memo
+      }, memo)
+    }, {})
   } else {
     return null
   }
@@ -147,21 +163,9 @@ const fetchHistory = async (db: AWS.DynamoDB.DocumentClient) => {
 
 export default function InterfaceHistory() {
   const [active, setActive] = useState(true)
-  const [history, setHistory] = useState<Record<
-    string,
-    FormattedStat[]
-  > | null>(null)
-  // const broker = useBroker()
-
-  const db = useRef<AWS.DynamoDB.DocumentClient>()
-  useEffect(() => {
-    db.current = new AWS.DynamoDB.DocumentClient({
-      endpoint: "http://localhost:4566",
-      region: "us-west-2",
-      accessKeyId: "test",
-      secretAccessKey: "test",
-    })
-  }, [])
+  const [history, setHistory] = useState<FormattedStats | null>(null)
+  const { sprite } = useBroker()
+  const db = useDynamoDbClient()
 
   useInterval(async () => {
     if (!db.current || !active) {
@@ -169,8 +173,11 @@ export default function InterfaceHistory() {
     }
     const fetched = await fetchHistory(db.current)
     setHistory(fetched)
-    console.info(fetched)
-  }, 5000)
+
+    if (fetched) {
+      sprite(historySprite(fetched["switch0"]))
+    }
+  }, 2000)
 
   if (!history) {
     return null

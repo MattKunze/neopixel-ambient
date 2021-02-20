@@ -22,6 +22,7 @@ provider:
   lambdaHashingVersion: 20201221
   environment:
     BUCKET_TABLE: ${env:BUCKET_TABLE}
+    OPEN_WEATHER_API_KEY: ${env:OPEN_WEATHER_API_KEY}
     UBNT_URL: ${env:UBNT_URL}
     UBNT_USERNAME: ${env:UBNT_USERNAME}
     UBNT_PASSWORD: ${env:UBNT_PASSWORD}
@@ -55,6 +56,11 @@ functions:
     events:
       - http: GET /ubntStatistics
 
+  fetchWeather:
+    handler: src/fetchWeather.default
+    events:
+      - http: GET /fetchWeather
+
   deleteStaleEntries:
     handler: src/deleteStaleEntries.default
     timeout: 90
@@ -69,21 +75,36 @@ functions:
 
 stepFunctions:
   stateMachines:
-    ubntInterfaces:
+    # ubntInterfaces:
+    #   events:
+    #     - schedule: rate(1 minute)
+    #   definition:
+    #     StartAt: StreamInterfaces
+    #     States:
+    #       StreamInterfaces:
+    #         Type: Task
+    #         Resource:
+    #           Fn::GetAtt: [streamStatistics, Arn]
+    #         Parameters:
+    #           bucketArn:
+    #             Fn::GetAtt: [bucket, Arn]
+    #           topic: interfaces
+    #           timeout: 60
+    #         End: true
+    fetchWeather:
       events:
-        - schedule: rate(1 minute)
+        - schedule: cron(0 * * * ? *)
       definition:
-        StartAt: StreamInterfaces
+        StartAt: FetchWeather
         States:
-          StreamInterfaces:
+          FetchWeather:
             Type: Task
             Resource:
-              Fn::GetAtt: [streamStatistics, Arn]
+              Fn::GetAtt: [fetchWeather, Arn]
             Parameters:
               bucketArn:
                 Fn::GetAtt: [bucket, Arn]
-              topic: interfaces
-              timeout: 60
+              zipCode: "80526"
             End: true
     dbCleanup:
       events:
