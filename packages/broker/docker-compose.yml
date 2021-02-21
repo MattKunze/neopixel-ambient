@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 volumes:
   data:
@@ -14,3 +14,5 @@ services:
       - ${PWD}/mosquitto.config:/mosquitto/config/mosquitto.conf
       - data:/mosquitto/data
       - logs:/mosquitto/logs
+  bridge:
+    build: ../mqtt-sns-bridge

@@ -4,7 +4,9 @@
   "author": "Matt Kunze <matt.kunze@gmail.com>",
   "license": "MIT",
   "private": true,
-  "workspaces": [ "packages/*" ],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "editor": "yarn workspace sprite-editor",
     "lambdas": "yarn workspace lambdas"
