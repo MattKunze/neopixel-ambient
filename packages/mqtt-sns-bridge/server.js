@@ -1,13 +1,13 @@
 const MQTT = require("async-mqtt")
 const AWS = require("aws-sdk")
 
-const MQTT_HOST = "ws://mqtt.boing.net:9001"
+const MQTT_HOST = "mqtt://mosquitto"
 const MQTT_TOPIC = "bucket/#"
 const SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:000000000000:bucket"
 
 const sns = new AWS.SNS({
   apiVersion: "2010-03-31",
-  endpoint: "http://brie.boing.net:4566",
+  endpoint: "http://localstack:4566",
   region: "us-west-2",
   accessKeyId: "test",
   secretAccessKey: "test",
